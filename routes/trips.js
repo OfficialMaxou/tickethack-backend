@@ -6,6 +6,7 @@ require('../models/connection')
 const Trip = require('../models/trips')
 
 const { checkBody } = require('../modules/checkBody')
+const moment = require('moment')
 
 
 router.get('/', function(req, res, next) {
@@ -13,46 +14,25 @@ router.get('/', function(req, res, next) {
         res.json({ trips: data })
     })
   });
-
-  /*router.post('/',(req,res)=>{
-    Trip.find({departure : req.body.departure,
-                arrival : req.body.arrival,})
-    .then(data =>{
-        if (data){
-            return res.json( {data})}
-        else{ return res.json("No trip found")}
-        })
-    })*/
-
-    /*router.post('/',(req,res)=>{
-        Trip.find({departure : req.body.departure,
-                    arrival : req.body.arrival,
-                    date : req.body.date //peut etre devoir modifier 
-                                        // la date en DD/MM/YYYY pour le front
-                })
-        .then(data =>{
-            if (data){
-                return res.json( {data})}
-            else{ return res.json(console.log("No trip found"))}
-            })
-        })*/
-
-           
               
  router.post('/', (req, res) => {
   if (!checkBody(req.body, ['departure', 'arrival', 'date'])) {
       res.json({ result: false, error: 'Missing or empty fields'})
       return;
   }     
-     Trip.find({departure : req.body.departure,
-                arrival : req.body.arrival,
-                date : req.body.date}).then(data => {
-      if (data) {
-        res.json({ data});
+     Trip.find({ departure : { $regex: new RegExp(req.body.departure, 'i')},
+     arrival : { $regex: new RegExp(req.body.arrival, 'i')} ,
+      date : {
+              $gte: moment.utc(req.body.date).startOf("day").toDate(),
+              $lt: moment.utc(req.body.date).endOf("day").toDate(),},
+      })
+      .then(VilleMatch => {
+      if (VilleMatch) {
+        res.json({ VilleMatch});
       } else {
         res.json({ result: false, error: 'No trip found' });
           }
    });
  });
-              
+ 
 module.exports = router;
