@@ -39,21 +39,20 @@ router.get('/', function(req, res, next) {
 
            
               
-            router.post('/', (req, res) => {
-                if (!checkBody(req.body, ['departure', 'arrival', 'date'])) {
-                  res.json({ result: false, error: 'ody'})
-                  return;
-                }
-              
-                Trip.find({departure : req.body.departure,
-                            arrival : req.body.arrival,
-                            date : req.body.date}).then(data => {
-                  if (data) {
-                    res.json({ data});
-                  } else {
-                    res.json({ result: false, error: 'No trip found' });
-                  }
-                });
-              });
+ router.post('/', (req, res) => {
+  if (!checkBody(req.body, ['departure', 'arrival', 'date'])) {
+      res.json({ result: false, error: 'Missing or empty fields'})
+      return;
+  }     
+     Trip.find({departure : req.body.departure,
+                arrival : req.body.arrival,
+                date : req.body.date}).then(data => {
+      if (data) {
+        res.json({ data});
+      } else {
+        res.json({ result: false, error: 'No trip found' });
+          }
+   });
+ });
               
 module.exports = router;
