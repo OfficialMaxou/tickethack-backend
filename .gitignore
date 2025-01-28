@@ -56,6 +56,7 @@ typings/
 
 # dotenv environment variables file
 .env
+CONNECTION_STRING = "mongodb+srv://admin:Diego131997@cluster0.31fwg.mongodb.net/myfirstdatabase"
 
 # next.js build output
 .next
